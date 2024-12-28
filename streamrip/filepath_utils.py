@@ -24,7 +24,7 @@ def clean_filename(fn: str, restrict: bool = False) -> str:
 
 def clean_pathsep(fn: str) -> str:
     if fn:
-        return fn.replace("/", "_").replace("\\", "_")
+        return fn.replace("/", "_").replace("\\", "_").replace(":",".")
     else:
         return fn
 
