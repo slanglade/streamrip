@@ -246,6 +246,6 @@ class DeezerClient(Client):
         path = binascii.hexlify(
             AES.new(b"jo6aey6haid2Teih", AES.MODE_ECB).encrypt(info_bytes),
         ).decode("utf-8")
-        url = f"https://e-cdns-proxy-{track_hash[0]}.dzcdn.net/mobile/1/{path}"
+        url = f"https://cdns-proxy-{track_hash[0]}.dzcdn.net/media/1/{path}"
         logger.debug("Encrypted file path %s", url)
         return url
