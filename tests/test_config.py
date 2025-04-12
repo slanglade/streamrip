@@ -4,28 +4,13 @@ import shutil
 import pytest
 import tomlkit
 
-from streamrip.config import (
-    ArtworkConfig,
-    CliConfig,
-    Config,
-    ConfigData,
-    ConversionConfig,
-    DatabaseConfig,
-    DeezerConfig,
-    DownloadsConfig,
-    FilepathsConfig,
-    LastFmConfig,
-    MetadataConfig,
-    MiscConfig,
-    QobuzConfig,
-    QobuzDiscographyFilterConfig,
-    SoundcloudConfig,
-    TidalConfig,
-    YoutubeConfig,
-    _get_dict_keys_r,
-    _nested_set,
-    update_config,
-)
+from streamrip.config import (ArtworkConfig, CliConfig, Config, ConfigData,
+                              ConversionConfig, DatabaseConfig, DeezerConfig,
+                              DownloadsConfig, FilepathsConfig, LastFmConfig,
+                              MetadataConfig, MiscConfig, QobuzConfig,
+                              QobuzDiscographyFilterConfig, SoundcloudConfig,
+                              TidalConfig, YoutubeConfig, _get_dict_keys_r,
+                              _nested_set, update_config)
 
 SAMPLE_CONFIG = "tests/test_config.toml"
 OLD_CONFIG = "tests/test_config_old.toml"
@@ -204,6 +189,8 @@ def test_sample_config_data_fields(sample_config_data):
             add_singles_to_folder=False,
             folder_format="{albumartist} - {title} ({year}) [{container}] [{bit_depth}B-{sampling_rate}kHz]",
             track_format="{tracknumber}. {artist} - {title}{explicit}",
+            playlist_format="{playlist}",
+            m3u8_format="{owner} - {playlist}",
             restrict_characters=False,
             truncate_to=120,
         ),

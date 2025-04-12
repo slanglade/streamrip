@@ -7,11 +7,8 @@ import deezer
 from Cryptodome.Cipher import AES
 
 from ..config import Config
-from ..exceptions import (
-    AuthenticationError,
-    MissingCredentialsError,
-    NonStreamableError,
-)
+from ..exceptions import (AuthenticationError, MissingCredentialsError,
+                          NonStreamableError)
 from .client import Client
 from .downloadable import DeezerDownloadable
 
@@ -72,15 +69,35 @@ class DeezerClient(Client):
         except Exception as e:
             raise NonStreamableError(e)
 
-        album_id = item["album"]["id"]
+        if not item["readable"]:
+            try:
+                if ("alternative" in item):
+                    logger.warning(f"Original track id {item_id} not readable, using alternative {item['d']}")
+                    item = item["alternative"]
+                    item_id = item["id"]
+                else:
+                    altitem = self.find_alternative_track(artist=item["artist"]["name"], album=item["album"]["title"], track=item["title"])
+                    if len(altitem) == 0:
+                        logger.warning(f"Track id {item_id} not readable, no precise alternative found, doing a wild guess with artist and track title")
+                        altitem = self.find_alternative_track(artist=item["artist"]["name"], track=item["title"])
+                        if len(altitem) == 0:
+                            raise Exception(f"Track {item_id} non readable, and no alternative found")
+                    logger.warning(f"Original track id {item_id} not readable, replacing with search result {altitem['id']}")
+                    item_id = altitem["id"]
+                    item = await asyncio.to_thread(self.client.api.get_track, item_id)
+            except Exception as e:
+                # Could also log warning(f"Original track id {item_id} seems not readable, trying anyway as Deezer API is sometimes wrong")
+                raise NonStreamableError(e)
+
         try:
+            album_id = item["album"]["id"]
             album_metadata, album_tracks = await asyncio.gather(
                 asyncio.to_thread(self.client.api.get_album, album_id),
                 asyncio.to_thread(self.client.api.get_album_tracks, album_id),
             )
         except Exception as e:
-            logger.error(f"Error fetching album of track {item_id}: {e}")
-            return item
+            logger.error(f"Error fetching album of track {item_id}")
+            raise NonStreamableError(e)
 
         album_metadata["tracks"] = album_tracks["data"]
         album_metadata["track_total"] = len(album_tracks["data"])
@@ -134,6 +151,13 @@ class DeezerClient(Client):
         if response["total"] > 0:
             return [response]
         return []
+    
+    def find_alternative_track(self, artist="", album="", track="") -> dict:
+        response = self.client.api.advanced_search(artist=artist, album=album, track=track, limit=1, strict=True)
+        if response["total"] >= 1:
+            return response["data"][0]
+        return []
+        
 
     async def get_downloadable(
         self,
@@ -182,6 +206,7 @@ class DeezerClient(Client):
             )
 
         if url is None:
+            logger.warning("Getting fallback url for track '%s'", track_info["SNG_TITLE"])
             url = self._get_encrypted_file_url(
                 item_id,
                 track_info["MD5_ORIGIN"],
@@ -221,6 +246,6 @@ class DeezerClient(Client):
         path = binascii.hexlify(
             AES.new(b"jo6aey6haid2Teih", AES.MODE_ECB).encrypt(info_bytes),
         ).decode("utf-8")
-        url = f"https://e-cdns-proxy-{track_hash[0]}.dzcdn.net/mobile/1/{path}"
+        url = f"https://cdns-proxy-{track_hash[0]}.dzcdn.net/media/1/{path}"
         logger.debug("Encrypted file path %s", url)
         return url

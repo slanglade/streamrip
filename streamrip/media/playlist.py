@@ -4,7 +4,7 @@ import logging
 import os
 import random
 import re
-from contextlib import ExitStack
+from contextlib import ExitStack, suppress
 from dataclasses import dataclass
 
 import aiohttp
@@ -17,13 +17,8 @@ from ..console import console
 from ..db import Database
 from ..exceptions import NonStreamableError
 from ..filepath_utils import clean_filepath
-from ..metadata import (
-    AlbumMetadata,
-    Covers,
-    PlaylistMetadata,
-    SearchResults,
-    TrackMetadata,
-)
+from ..metadata import (AlbumMetadata, Covers, PlaylistMetadata, SearchResults,
+                        TrackMetadata)
 from ..utils.ssl_utils import get_aiohttp_connector_kwargs
 from .artwork import download_artwork
 from .media import Media, Pending
@@ -38,19 +33,26 @@ class PendingPlaylistTrack(Pending):
     client: Client
     config: Config
     folder: str
+    m3u8: str
     playlist_name: str
     position: int
     db: Database
 
     async def resolve(self) -> Track | None:
-        if self.db.downloaded(self.id):
-            logger.info(f"Track ({self.id}) already logged in database. Skipping.")
+        if self._check_downloaded():
             return None
+            
         try:
             resp = await self.client.get_metadata(self.id, "track")
         except NonStreamableError as e:
             logger.error(f"Could not stream track {self.id}: {e}")
             return None
+
+        # In case of alternative song downloaded, update track id and re-do the self.db.downloaded test
+        if self.id != resp["id"] :
+            self.id = resp["id"]
+            if self._check_downloaded():
+                return None
 
         album = AlbumMetadata.from_track_resp(resp, self.client.source)
         if album is None:
@@ -83,15 +85,28 @@ class PendingPlaylistTrack(Pending):
             logger.error(f"Error fetching download info for track {self.id}: {e}")
             self.db.set_failed(self.client.source, "track", self.id)
             return None
-
+        
         return Track(
-            meta,
-            downloadable,
-            self.config,
-            self.folder,
-            embedded_cover_path,
-            self.db,
+            meta=meta,
+            downloadable=downloadable,
+            config=self.config,
+            folder=self.folder,
+            m3u8=self.m3u8,
+            cover_path=embedded_cover_path,
+            db=self.db,
         )
+
+    def _check_downloaded(self) -> bool:
+        already_downloaded = self.db.downloaded(self.id)
+        if already_downloaded:
+            logger.info(f"Track ({self.id}) already logged in database, stored in {already_downloaded}. Skipping.")
+            if self.m3u8:
+                with open(self.m3u8, 'a+') as f:
+                    # Write filepath using relative path. Given m3u8 file is located in the same folder structure, simply replace its path with "."
+                    f.write(already_downloaded.replace(os.path.dirname(self.m3u8), ".") + "\n")
+            return True
+        else:
+            return False
 
     async def _download_cover(self, covers: Covers, folder: str) -> str | None:
         embed_path, _ = await download_artwork(
@@ -110,6 +125,7 @@ class Playlist(Media):
     config: Config
     client: Client
     tracks: list[PendingPlaylistTrack]
+    m3u8: str
 
     async def preprocess(self):
         progress.add_title(self.name)
@@ -170,21 +186,54 @@ class PendingPlaylist(Pending):
             logger.error(f"Error creating playlist: {e}")
             return None
         name = meta.name
-        parent = self.config.session.downloads.folder
-        folder = os.path.join(parent, clean_filepath(name))
+        folder = self.config.session.downloads.folder
+        playlist_folder = self._playlist_folder(folder, meta)
+        os.makedirs(playlist_folder, exist_ok=True)
+        # Construct m3u8 filename and delete it, as we're rebuilding it from scratch
+        m3u8 = self._m3u8_file(folder, meta)
+        with suppress(FileNotFoundError):
+            os.remove(m3u8)
+
         tracks = [
             PendingPlaylistTrack(
-                id,
-                self.client,
-                self.config,
-                folder,
-                name,
-                position + 1,
-                self.db,
+                id=id,
+                client=self.client,
+                config=self.config,
+                folder=playlist_folder,
+                m3u8=m3u8,
+                playlist_name=name,
+                position=position + 1,
+                db=self.db,
             )
             for position, id in enumerate(meta.ids())
         ]
-        return Playlist(name, self.config, self.client, tracks)
+        return Playlist(name, self.config, self.client, tracks, m3u8)
+
+    def _playlist_folder(self, parent: str, meta: PlaylistMetadata) -> str:
+        config = self.config.session
+        if config.downloads.source_subdirectories:
+            parent = os.path.join(parent, self.client.source.capitalize())
+        formatter = config.filepaths.playlist_format
+        folder = clean_filepath(
+            meta.format_folder_path(formatter), config.filepaths.restrict_characters
+        )
+
+        return os.path.join(parent, folder)
+
+    def _m3u8_file(self, parent: str, meta: PlaylistMetadata) -> str:
+        config = self.config.session
+        if config.filepaths.m3u8_format:
+            config = self.config.session
+            if config.downloads.source_subdirectories:
+                parent = os.path.join(parent, self.client.source.capitalize())
+            formatter = config.filepaths.m3u8_format
+            folder = clean_filepath(
+                meta.format_folder_path(formatter), config.filepaths.restrict_characters
+            )
+
+            return os.path.join(parent, folder) + '.m3u8'
+        else:
+            return ''
 
 
 @dataclass(slots=True)
@@ -242,8 +291,10 @@ class PendingLastfmPlaylist(Pending):
                 requests.append(self._make_query(f"{title} {artist}", s, callback))
             results: list[tuple[str | None, bool]] = await asyncio.gather(*requests)
 
-        parent = self.config.session.downloads.folder
-        folder = os.path.join(parent, clean_filepath(playlist_title))
+        folder = self.config.session.downloads.folder
+        playlist_folder = folder # TODO : find a way to get meta from lastfm playlist, should be something like self._playlist_folder(folder, meta)
+        os.makedirs(playlist_folder, exist_ok=True)
+        m3u8 = self._m3u8_lastfm(folder, playlist_title)
 
         pending_tracks = []
         for pos, (id, from_fallback) in enumerate(results, start=1):
@@ -262,14 +313,15 @@ class PendingLastfmPlaylist(Pending):
                     id,
                     client,
                     self.config,
-                    folder,
+                    playlist_folder,
+                    m3u8,
                     playlist_title,
                     pos,
                     self.db,
                 ),
             )
 
-        return Playlist(playlist_title, self.config, self.client, pending_tracks)
+        return Playlist(playlist_title, self.config, self.client, pending_tracks, m3u8)
 
     async def _make_query(
         self,
@@ -408,3 +460,23 @@ class PendingLastfmPlaylist(Pending):
             s.failed += 1
         callback()
         return None, False
+
+    def _playlist_folder(self, parent: str, meta: PlaylistMetadata) -> str:
+        config = self.config.session
+        if config.downloads.source_subdirectories:
+            parent = os.path.join(parent, self.client.source.capitalize())
+        formatter = config.filepaths.playlist_format
+        folder = clean_filepath(
+            meta.format_folder_path(formatter), config.filepaths.restrict_characters
+        )
+
+        return os.path.join(parent, folder)
+
+    def _m3u8_lastfm(self, parent: str, name: str) -> str:
+        config = self.config.session
+        if config.filepaths.m3u8_format:
+            if config.downloads.source_subdirectories:
+                parent = os.path.join(parent, self.client.source.capitalize())
+            return os.path.join(parent, name) + '.m3u8'
+        else:
+            return ''

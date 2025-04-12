@@ -7,14 +7,8 @@ from abc import ABC, abstractmethod
 from ..client import Client, SoundcloudClient
 from ..config import Config
 from ..db import Database
-from ..media import (
-    Pending,
-    PendingAlbum,
-    PendingArtist,
-    PendingLabel,
-    PendingPlaylist,
-    PendingSingle,
-)
+from ..media import (Pending, PendingAlbum, PendingArtist, PendingLabel,
+                     PendingPlaylist, PendingSingle)
 
 logger = logging.getLogger("streamrip")
 URL_REGEX = re.compile(
