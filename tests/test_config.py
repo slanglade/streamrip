@@ -189,6 +189,8 @@ def test_sample_config_data_fields(sample_config_data):
             add_singles_to_folder=False,
             folder_format="{albumartist} - {title} ({year}) [{container}] [{bit_depth}B-{sampling_rate}kHz]",
             track_format="{tracknumber}. {artist} - {title}{explicit}",
+            playlist_format="{playlist}",
+            m3u8_format="{owner} - {playlist}",
             restrict_characters=False,
             truncate_to=120,
         ),

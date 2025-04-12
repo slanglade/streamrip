@@ -30,6 +30,7 @@ class TestErrorHandling:
             config=mock_config,
             client=mock_client,
             tracks=[mock_track_success, mock_track_failure],
+            m3u8="playlist.m3u8",
         )
 
         await playlist.download()
