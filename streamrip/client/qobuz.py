@@ -10,14 +10,9 @@ from typing import List, Optional
 import aiohttp
 
 from ..config import Config
-from ..exceptions import (
-    AuthenticationError,
-    IneligibleError,
-    InvalidAppIdError,
-    InvalidAppSecretError,
-    MissingCredentialsError,
-    NonStreamableError,
-)
+from ..exceptions import (AuthenticationError, IneligibleError,
+                          InvalidAppIdError, InvalidAppSecretError,
+                          MissingCredentialsError, NonStreamableError)
 from .client import Client
 from .downloadable import BasicDownloadable, Downloadable
 
