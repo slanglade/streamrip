@@ -5,8 +5,11 @@ from enum import Enum
 import aiofiles
 from mutagen import id3
 from mutagen.flac import FLAC, Picture
-from mutagen.id3 import APIC  # type: ignore
-from mutagen.id3 import ID3, ID3NoHeaderError
+from mutagen.id3 import (
+    APIC,  # type: ignore
+    ID3,
+    ID3NoHeaderError,
+)
 from mutagen.mp4 import MP4, MP4Cover
 
 from .track import TrackMetadata

@@ -1,8 +1,12 @@
 import unittest
 from unittest.mock import AsyncMock, patch
 
-from streamrip.rip.parse_url import (DeezerDynamicURL, GenericURL,
-                                     SoundcloudURL, parse_url)
+from streamrip.rip.parse_url import (
+    DeezerDynamicURL,
+    GenericURL,
+    SoundcloudURL,
+    parse_url,
+)
 
 
 class TestParseURL(unittest.TestCase):
