@@ -1,10 +1,10 @@
 import logging
 from dataclasses import dataclass
 
+from ..filepath_utils import clean_pathsep
 from .album import AlbumMetadata
 from .track import TrackMetadata
 from .util import typed
-from ..filepath_utils import clean_pathsep
 
 NON_STREAMABLE = "_non_streamable"
 ORIGINAL_DOWNLOAD = "_original_download"

@@ -4,9 +4,9 @@ import logging
 from dataclasses import dataclass
 from typing import Optional
 
+from ..filepath_utils import clean_pathsep
 from .album import AlbumMetadata
 from .util import safe_get, typed
-from ..filepath_utils import clean_pathsep
 
 logger = logging.getLogger("streamrip")
 

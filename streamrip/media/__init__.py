@@ -3,29 +3,25 @@ from .artist import Artist, PendingArtist
 from .artwork import remove_artwork_tempdirs
 from .label import Label, PendingLabel
 from .media import Media, Pending
-from .playlist import (
-    PendingLastfmPlaylist,
-    PendingPlaylist,
-    PendingPlaylistTrack,
-    Playlist,
-)
+from .playlist import (PendingLastfmPlaylist, PendingPlaylist,
+                       PendingPlaylistTrack, Playlist)
 from .track import PendingSingle, PendingTrack, Track
 
 __all__ = [
+    "Album",
+    "Artist",
+    "Label",
     "Media",
     "Pending",
-    "Album",
     "PendingAlbum",
-    "Artist",
     "PendingArtist",
-    "Label",
     "PendingLabel",
-    "Playlist",
-    "PendingPlaylist",
     "PendingLastfmPlaylist",
-    "Track",
-    "PendingTrack",
+    "PendingPlaylist",
     "PendingPlaylistTrack",
     "PendingSingle",
+    "PendingTrack",
+    "Playlist",
     "remove_artwork_tempdirs",
+    "Track",
 ]

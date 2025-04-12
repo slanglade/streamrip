@@ -5,10 +5,9 @@ import re
 from dataclasses import dataclass
 from typing import Optional
 
-from ..filepath_utils import clean_filepath
+from ..filepath_utils import clean_filepath, clean_pathsep
 from .covers import Covers
 from .util import get_quality_id, safe_get, typed
-from ..filepath_utils import clean_pathsep
 
 PHON_COPYRIGHT = "\u2117"
 COPYRIGHT = "\u00a9"
