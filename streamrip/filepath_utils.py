@@ -1,8 +1,6 @@
-from string import printable
-
-from pathvalidate import sanitize_filename, sanitize_filepath  # type: ignore
-
 import os
+from pathvalidate import sanitize_filename, sanitize_filepath  # type: ignore
+from string import printable
 
 ALLOWED_CHARS = set(printable)
 

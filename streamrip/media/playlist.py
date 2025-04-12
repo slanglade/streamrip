@@ -102,13 +102,13 @@ class PendingPlaylistTrack(Pending):
         )
 
     def _check_downloaded(self) -> bool:
-        alreadyDownloaded = self.db.downloaded(self.id)
-        if alreadyDownloaded:
-            logger.info(f"Track ({self.id}) already logged in database, stored in {alreadyDownloaded}. Skipping.")
+        already_downloaded = self.db.downloaded(self.id)
+        if already_downloaded:
+            logger.info(f"Track ({self.id}) already logged in database, stored in {already_downloaded}. Skipping.")
             if self.m3u8:
                 with open(self.m3u8, 'a+') as f:
                     # Write filepath using relative path. Given m3u8 file is located in the same folder structure, simply replace its path with "."
-                    f.write(alreadyDownloaded.replace(os.path.dirname(self.m3u8), ".") + "\n")
+                    f.write(already_downloaded.replace(os.path.dirname(self.m3u8), ".") + "\n")
             return True
         else:
             return False
@@ -297,7 +297,7 @@ class PendingLastfmPlaylist(Pending):
             results: list[tuple[str | None, bool]] = await asyncio.gather(*requests)
 
         folder = self.config.session.downloads.folder
-        playlist_folder = self._playlist_folder(folder, meta)
+        playlist_folder = folder # TODO : find a way to get meta from lastfm playlist, should be something like self._playlist_folder(folder, meta)
         os.makedirs(playlist_folder, exist_ok=True)
         m3u8 = self._m3u8_lastfm(folder, playlist_title)
 

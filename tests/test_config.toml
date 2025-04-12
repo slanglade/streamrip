@@ -170,6 +170,10 @@ restrict_characters = false
 # Truncate the filename if it is greater than this number of characters
 # Setting this to false may cause downloads to fail on some systems
 truncate_to = 120
+# Available keys : "owner", "playlist", leave empty if no needed upper level format to be prepended to track_format
+playlist_format = "{playlist}"
+# Available keys : "owner", "playlist"
+m3u8_format = "{owner} - {playlist}"
 
 # Last.fm playlists are downloaded by searching for the titles of the tracks
 [lastfm]

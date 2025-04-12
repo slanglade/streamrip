@@ -5,7 +5,7 @@ import re
 from dataclasses import dataclass
 from typing import Optional
 
-from ..filepath_utils import clean_filename, clean_filepath
+from ..filepath_utils import clean_filepath
 from .covers import Covers
 from .util import get_quality_id, safe_get, typed
 from ..filepath_utils import clean_pathsep

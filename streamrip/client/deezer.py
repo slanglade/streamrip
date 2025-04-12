@@ -72,7 +72,7 @@ class DeezerClient(Client):
         except Exception as e:
             raise NonStreamableError(e)
 
-        if item["readable"] == False:
+        if not item["readable"]:
             try:
                 if ("alternative" in item):
                     logger.warning(f"Original track id {item_id} not readable, using alternative {item['d']}")
@@ -89,7 +89,7 @@ class DeezerClient(Client):
                     item_id = altitem["id"]
                     item = await asyncio.to_thread(self.client.api.get_track, item_id)
             except Exception as e:
-                # logger.warning(f"Original track id {item_id} seems not readable, trying anyway as Deezer API is sometimes wrong")
+                # Could also log warning(f"Original track id {item_id} seems not readable, trying anyway as Deezer API is sometimes wrong")
                 raise NonStreamableError(e)
 
         try:

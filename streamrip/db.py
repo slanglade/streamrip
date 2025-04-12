@@ -38,7 +38,7 @@ class Dummy(DatabaseInterface):
     def create(self):
         pass
 
-    def getPath(self, **_):
+    def get_path(self, **_):
         return ""
 
     def add(self, *_):
@@ -167,7 +167,7 @@ class Downloads(DatabaseBase):
         "filepath": ["text"],
     }
 
-    def getPath(self, **items) -> str:
+    def get_path(self, **items) -> str:
         """Check whether items matches an entry in the table, return associated filepath
 
         :param items: a dict of column-name + expected value
@@ -208,7 +208,7 @@ class Database:
     failed: Failed
 
     def downloaded(self, item_id: str) -> str:
-        return self.downloads.getPath(id=item_id)
+        return self.downloads.get_path(id=item_id)
 
     def set_downloaded(self, item_id, filepath: str):
         self.downloads.add((item_id,filepath,))
