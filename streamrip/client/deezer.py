@@ -2,8 +2,10 @@ import asyncio
 import binascii
 import hashlib
 import logging
+
 import deezer
 from Cryptodome.Cipher import AES
+
 from ..config import Config
 from ..exceptions import (AuthenticationError, MissingCredentialsError,
                           NonStreamableError)
