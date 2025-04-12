@@ -24,6 +24,7 @@ from ..metadata import (
     SearchResults,
     TrackMetadata,
 )
+from ..utils.ssl_utils import get_aiohttp_connector_kwargs
 from .artwork import download_artwork
 from .media import Media, Pending
 from .track import Track
@@ -86,7 +87,7 @@ class PendingPlaylistTrack(Pending):
                 self.client.get_downloadable(self.id, quality),
             )
         except NonStreamableError as e:
-            logger.error("Error fetching download info for track: %s", e)
+            logger.error(f"Error fetching download info for track {self.id}: {e}")
             self.db.set_failed(self.client.source, "track", self.id)
             return None
         
@@ -141,17 +142,25 @@ class Playlist(Media):
         track_resolve_chunk_size = 20
 
         async def _resolve_download(item: PendingPlaylistTrack):
-            track = await item.resolve()
-            if track is None:
-                return
-            await track.rip()
+            try:
+                track = await item.resolve()
+                if track is None:
+                    return
+                await track.rip()
+            except Exception as e:
+                logger.error(f"Error downloading track: {e}")
 
         batches = self.batch(
             [_resolve_download(track) for track in self.tracks],
             track_resolve_chunk_size,
         )
+
         for batch in batches:
-            await asyncio.gather(*batch)
+            results = await asyncio.gather(*batch, return_exceptions=True)
+
+            for result in results:
+                if isinstance(result, Exception):
+                    logger.error(f"Batch processing error: {result}")
 
     @staticmethod
     def batch(iterable, n=1):
@@ -176,7 +185,11 @@ class PendingPlaylist(Pending):
             )
             return None
 
-        meta = PlaylistMetadata.from_resp(resp, self.client.source)
+        try:
+            meta = PlaylistMetadata.from_resp(resp, self.client.source)
+        except Exception as e:
+            logger.error(f"Error creating playlist: {e}")
+            return None
         name = meta.name
         folder = self.config.session.downloads.folder
         playlist_folder = self._playlist_folder(folder, meta)
@@ -403,7 +416,11 @@ class PendingLastfmPlaylist(Pending):
                 return await resp.text("utf-8")
 
         # Create new session so we're not bound by rate limit
-        async with aiohttp.ClientSession() as session:
+        verify_ssl = getattr(self.config.session.downloads, "verify_ssl", True)
+        connector_kwargs = get_aiohttp_connector_kwargs(verify_ssl=verify_ssl)
+        connector = aiohttp.TCPConnector(**connector_kwargs)
+
+        async with aiohttp.ClientSession(connector=connector) as session:
             page = await fetch(session, playlist_url)
             playlist_title_match = re_playlist_title_match.search(page)
             if playlist_title_match is None:

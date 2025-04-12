@@ -7,6 +7,13 @@ import os
 ALLOWED_CHARS = set(printable)
 
 
+# TODO: remove this when new pathvalidate release arrives with https://github.com/thombashi/pathvalidate/pull/48
+def truncate_str(text: str) -> str:
+    str_bytes = text.encode()
+    str_bytes = str_bytes[:255]
+    return str_bytes.decode(errors="ignore")
+
+
 def clean_filename(fn: str, restrict: bool = False) -> str:
     if fn:
         parts = os.path.normpath(fn).split(os.path.sep)
