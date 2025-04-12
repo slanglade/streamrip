@@ -47,7 +47,7 @@ certifi = { version = "^2025.1.31", optional = true }
 [tool.poetry.dev-dependencies]
 types-click = "^7.1.2"
 types-Pillow = "^8.3.1"
-ruff = "^0.1"
+ruff = "^0.11"
 black = "^24"
 isort = "^5.9.3"
 flake8 = "^3.9.2"
