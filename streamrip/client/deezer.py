@@ -207,6 +207,7 @@ class DeezerClient(Client):
             )
 
         if url is None:
+            logger.warning("Getting fallback url for track '%s'", track_info["SNG_TITLE"])
             url = self._get_encrypted_file_url(
                 item_id,
                 track_info["MD5_ORIGIN"],
