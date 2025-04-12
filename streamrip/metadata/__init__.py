@@ -23,11 +23,11 @@ __all__ = [
     "LabelSummary",
     "PlaylistMetadata",
     "PlaylistSummary",
-    "tag_file",
     "SearchResults",
     "Summary",
     "TrackInfo",
     "TrackMetadata",
     "TrackSummary",
+    "tag_file",
     "util",
 ]

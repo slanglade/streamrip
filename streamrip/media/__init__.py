@@ -22,6 +22,6 @@ __all__ = [
     "PendingSingle",
     "PendingTrack",
     "Playlist",
-    "remove_artwork_tempdirs",
     "Track",
+    "remove_artwork_tempdirs",
 ]
