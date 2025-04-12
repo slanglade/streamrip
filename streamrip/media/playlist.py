@@ -17,13 +17,8 @@ from ..console import console
 from ..db import Database
 from ..exceptions import NonStreamableError
 from ..filepath_utils import clean_filepath
-from ..metadata import (
-    AlbumMetadata,
-    Covers,
-    PlaylistMetadata,
-    SearchResults,
-    TrackMetadata,
-)
+from ..metadata import (AlbumMetadata, Covers, PlaylistMetadata, SearchResults,
+                        TrackMetadata)
 from ..utils.ssl_utils import get_aiohttp_connector_kwargs
 from .artwork import download_artwork
 from .media import Media, Pending

@@ -6,20 +6,13 @@ import platform
 import aiofiles
 
 from .. import db
-from ..client import Client, DeezerClient, QobuzClient, SoundcloudClient, TidalClient
+from ..client import (Client, DeezerClient, QobuzClient, SoundcloudClient,
+                      TidalClient)
 from ..config import Config
 from ..console import console
-from ..media import (
-    Media,
-    Pending,
-    PendingAlbum,
-    PendingArtist,
-    PendingLabel,
-    PendingLastfmPlaylist,
-    PendingPlaylist,
-    PendingSingle,
-    remove_artwork_tempdirs,
-)
+from ..media import (Media, Pending, PendingAlbum, PendingArtist, PendingLabel,
+                     PendingLastfmPlaylist, PendingPlaylist, PendingSingle,
+                     remove_artwork_tempdirs)
 from ..metadata import SearchResults
 from ..progress import clear_progress
 from .parse_url import parse_url

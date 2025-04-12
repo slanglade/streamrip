@@ -7,11 +7,9 @@ import pytest
 from streamrip.client.client import Client
 from streamrip.client.qobuz import QobuzSpoofer
 from streamrip.rip.cli import latest_streamrip_version, rip
-from streamrip.utils.ssl_utils import (
-    create_ssl_context,
-    get_aiohttp_connector_kwargs,
-    print_ssl_error_help,
-)
+from streamrip.utils.ssl_utils import (create_ssl_context,
+                                       get_aiohttp_connector_kwargs,
+                                       print_ssl_error_help)
 
 
 @pytest.fixture

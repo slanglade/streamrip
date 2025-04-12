@@ -7,11 +7,8 @@ import deezer
 from Cryptodome.Cipher import AES
 
 from ..config import Config
-from ..exceptions import (
-    AuthenticationError,
-    MissingCredentialsError,
-    NonStreamableError,
-)
+from ..exceptions import (AuthenticationError, MissingCredentialsError,
+                          NonStreamableError)
 from .client import Client
 from .downloadable import DeezerDownloadable
 
