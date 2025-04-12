@@ -47,7 +47,7 @@ async def fast_async_download(path, url, headers, callback):
     chunk_size: int = 2**17  # 131 KB
     counter = 0
     yield_every = 8  # 1 MB
-    with open(path, "wb") as file:  # noqa: ASYNC230
+    with open(path, "wb") as file:  # noqa: ASYNC230, ASYNC210
         with requests.get(
             url,
             headers=headers,
