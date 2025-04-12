@@ -90,7 +90,7 @@ class Track(Media):
             self.db.set_downloaded(self.meta.info.id, self.download_path)
             if self.m3u8:
                 try:
-                    with open(self.m3u8, 'a+') as f: # noqa: ASYNC230
+                    with open(self.m3u8, 'a+') as f: # noqa: ASYNC101, ASYNC210
                         # Write filepath using relative path. Given m3u8 file is located in the same folder structure, simply replace its path with "."
                         f.write(self.download_path.replace(os.path.dirname(self.m3u8), ".") + "\n")
                 except Exception as e:
