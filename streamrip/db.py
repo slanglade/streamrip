@@ -38,7 +38,7 @@ class Dummy(DatabaseInterface):
     def create(self):
         pass
 
-    def get_path(self, **_):
+    def contains(self, **_):
         return ""
 
     def add(self, *_):
