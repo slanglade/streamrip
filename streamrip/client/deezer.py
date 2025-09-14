@@ -154,8 +154,11 @@ class DeezerClient(Client):
     
     def find_alternative_track(self, artist="", album="", track="") -> dict:
         response = self.client.api.advanced_search(artist=artist, album=album, track=track, limit=1, strict=True)
-        if response["total"] >= 1:
-            return response["data"][0]
+        i = 0
+        while i < response["total"]:
+            if response["data"][i]["readable"]:
+                return response["data"][i]
+            i += 1
         return []
         
 
