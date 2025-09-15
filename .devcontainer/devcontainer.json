@@ -1,0 +1,24 @@
+{
+ "name": "Python 3",
+ "image": "mcr.microsoft.com/devcontainers/python:3",
+ "remoteUser": "vscode",
+ "postCreateCommand": "bash .devcontainer/post-create.sh",
+ "customizations": {
+  "vscode": {
+   "settings": {},
+   "extensions": [
+    "gruntfuggly.todo-tree",
+    "heartacker.git-graph-ai",
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "ryanluker.vscode-coverage-gutters",
+    "meezilla.json",
+    "yzhang.markdown-all-in-one",
+    "foxundermoon.shell-format",
+    "shardulm94.trailing-spaces",
+    "github.copilot",
+    "github.copilot-chat"
+   ]
+  }
+ }
+}
