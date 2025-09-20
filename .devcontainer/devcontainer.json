@@ -5,11 +5,22 @@
  "postCreateCommand": "bash .devcontainer/post-create.sh",
  "mounts": [
   "source=/mnt/music,target=/mnt/music,type=bind,consistency=cached",
-  "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached"
+  "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached",
+  "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind,consistency=cached"
  ],
  "customizations": {
   "vscode": {
-   "settings": {},
+    "settings": {
+    "terminal.integrated.profiles.linux": {
+        "bash": {
+            "path": "/bin/bash",
+            "icon": "terminal-bash",
+            "args": [
+                "-l"
+            ]
+        }
+    }
+   },
    "extensions": [
     "gruntfuggly.todo-tree",
     "heartacker.git-graph-ai",
