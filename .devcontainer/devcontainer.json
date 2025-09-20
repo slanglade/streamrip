@@ -4,7 +4,8 @@
  "remoteUser": "vscode",
  "postCreateCommand": "bash .devcontainer/post-create.sh",
  "mounts": [
-  "source=/mnt/music,target=/mnt/music,type=bind,consistency=cached"
+  "source=/mnt/music,target=/mnt/music,type=bind,consistency=cached",
+  "source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind,consistency=cached"
  ],
  "customizations": {
   "vscode": {
