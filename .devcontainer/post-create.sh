@@ -10,3 +10,6 @@ poetry update
 # Move in project's virtual env (to activate rip command)
 echo -e "\nalias venv=\"source \\\$(poetry env info -p)/bin/activate\"" >> ~/.bashrc
 # alias venv="source \$(poetry env info -p)/bin/activate"
+
+# install Docker cli part, to build and push images
+sudo apt update && sudo apt --assume-yes upgrade && sudo apt --assume-yes install docker-cli

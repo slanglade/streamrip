@@ -2,6 +2,9 @@
  "name": "Streamrip - Python 3",
  "image": "mcr.microsoft.com/devcontainers/python:3",
  "remoteUser": "vscode",
+ "remoteEnv": {
+    "DOCKERHUB_TOKEN": "${localEnv:DOCKERHUB_TOKEN}"
+ },
  "postCreateCommand": "bash .devcontainer/post-create.sh",
  "mounts": [
   "source=/mnt/music,target=/mnt/music,type=bind,consistency=cached",
