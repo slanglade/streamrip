@@ -17,8 +17,7 @@ from rich.prompt import Confirm
 from rich.traceback import install
 
 from .. import __version__, db
-from ..config import (DEFAULT_CONFIG_PATH, Config, OutdatedConfigError,
-                      set_user_defaults)
+from ..config import DEFAULT_CONFIG_PATH, Config, OutdatedConfigError, set_user_defaults
 from ..console import console
 from ..utils.ssl_utils import get_aiohttp_connector_kwargs
 from .main import Main

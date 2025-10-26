@@ -3,8 +3,13 @@ from typing import Callable
 
 from rich.console import Group
 from rich.live import Live
-from rich.progress import (BarColumn, Progress, TextColumn,
-                           TimeRemainingColumn, TransferSpeedColumn)
+from rich.progress import (
+    BarColumn,
+    Progress,
+    TextColumn,
+    TimeRemainingColumn,
+    TransferSpeedColumn,
+)
 from rich.rule import Rule
 from rich.text import Text
 

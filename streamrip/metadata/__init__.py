@@ -6,9 +6,15 @@ from .artist import ArtistMetadata
 from .covers import Covers
 from .label import LabelMetadata
 from .playlist import PlaylistMetadata
-from .search_results import (AlbumSummary, ArtistSummary, LabelSummary,
-                             PlaylistSummary, SearchResults, Summary,
-                             TrackSummary)
+from .search_results import (
+                             AlbumSummary,
+                             ArtistSummary,
+                             LabelSummary,
+                             PlaylistSummary,
+                             SearchResults,
+                             Summary,
+                             TrackSummary,
+)
 from .tagger import tag_file
 from .track import TrackInfo, TrackMetadata
 
