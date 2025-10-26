@@ -4,13 +4,28 @@ import shutil
 import pytest
 import tomlkit
 
-from streamrip.config import (ArtworkConfig, CliConfig, Config, ConfigData,
-                              ConversionConfig, DatabaseConfig, DeezerConfig,
-                              DownloadsConfig, FilepathsConfig, LastFmConfig,
-                              MetadataConfig, MiscConfig, QobuzConfig,
-                              QobuzDiscographyFilterConfig, SoundcloudConfig,
-                              TidalConfig, YoutubeConfig, _get_dict_keys_r,
-                              _nested_set, update_config)
+from streamrip.config import (
+    ArtworkConfig,
+    CliConfig,
+    Config,
+    ConfigData,
+    ConversionConfig,
+    DatabaseConfig,
+    DeezerConfig,
+    DownloadsConfig,
+    FilepathsConfig,
+    LastFmConfig,
+    MetadataConfig,
+    MiscConfig,
+    QobuzConfig,
+    QobuzDiscographyFilterConfig,
+    SoundcloudConfig,
+    TidalConfig,
+    YoutubeConfig,
+    _get_dict_keys_r,
+    _nested_set,
+    update_config,
+)
 
 SAMPLE_CONFIG = "tests/test_config.toml"
 OLD_CONFIG = "tests/test_config_old.toml"
