@@ -15,11 +15,12 @@ RUN chmod +x streamrip.sh
 WORKDIR /app
 
 # Create a group and user
-RUN adduser -S billgates -G users -u 1027 \
-&& chown -R billgates:users /app /music /config
+RUN adduser -S Amadeus -G users -u 1029 \
+&& chown -R Amadeus:users /app /music /config
 
 WORKDIR /app
-USER billgates
+USER Amadeus
 RUN poetry install
 
-CMD ["sh", "-c", "/streamrip.sh"]
+ENTRYPOINT ["sh", "-c"]
+CMD ["/streamrip.sh"]
