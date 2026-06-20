@@ -233,6 +233,7 @@ class TrackMetadata:
         # and "explicit", "albumcomposer"
         none_text = "Unknown"
         info = {
+            "id": self.info.id,
             "title": clean_pathsep(self.title),
             "tracknumber": self.tracknumber,
             "artist": clean_pathsep(self.artist),

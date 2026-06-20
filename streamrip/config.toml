@@ -166,7 +166,7 @@ add_singles_to_folder = false
 # Available keys: "albumartist", "title", "year", "bit_depth", "sampling_rate"
 # "id", "albumcomposer", "playlist", "owner"
 folder_format = "{albumartist} - {title} ({year}) [{container}] [{bit_depth}B-{sampling_rate}kHz]"
-# Available keys: "tracknumber", "artist", "albumartist", "composer", "title", "albumtitle"
+# Available keys: "id", "tracknumber", "artist", "albumartist", "composer", "title", "albumtitle"
 # and "albumcomposer", "explicit"
 track_format = "{tracknumber:02}. {artist} - {title}{explicit}"
 # Available keys : "owner", "playlist", leave empty if no needed upper level format to be prepended to track_format
