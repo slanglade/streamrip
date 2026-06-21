@@ -257,7 +257,10 @@ class Database:
     replacements: Replacements
 
     def downloaded(self, item_id: str) -> str:
-        # Check direct download first
+        # Check direct download first.
+        # If the requested id was an old or invalid identifier, consult the
+        # replacements table to find a mapped replacement id and return the
+        # filepath for that replacement if it has already been downloaded.
         path = self.downloads.get_path(id=item_id)
         if path:
             return path
