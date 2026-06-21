@@ -161,11 +161,19 @@ class PendingTrack(Pending):
             return None
 
         source = self.client.source
+        original_id = self.id
         try:
             resp = await self.client.get_metadata(self.id, "track")
         except NonStreamableError as e:
             logger.error(f"Track {self.id} not available for stream on {source}: {e}")
             return None
+        if self.id != resp.get("id"):
+            self.id = resp["id"]
+            if self.db.downloaded(self.id):
+                logger.info(
+                    f"Skipping track {self.id}. Marked as downloaded in the database.",
+                )
+                return None
 
         try:
             meta = TrackMetadata.from_resp(self.album, source, resp)
@@ -201,7 +209,7 @@ class PendingTrack(Pending):
             m3u8=self.m3u8,
             cover_path=self.cover_path,
             db=self.db,
-            original_id=self.id,
+            original_id=original_id if original_id != self.id else None,
         )
 
 
@@ -225,11 +233,19 @@ class PendingSingle(Pending):
             )
             return None
 
+        original_id = self.id
         try:
             resp = await self.client.get_metadata(self.id, "track")
         except NonStreamableError as e:
             logger.error(f"Error fetching track {self.id}: {e}")
             return None
+        if self.id != resp.get("id"):
+            self.id = resp["id"]
+            if self.db.downloaded(self.id):
+                logger.info(
+                    f"Skipping track {self.id}. Marked as downloaded in the database.",
+                )
+                return None
         # Patch for soundcloud
         try:
             album = AlbumMetadata.from_track_resp(resp, self.client.source)
@@ -280,7 +296,7 @@ class PendingSingle(Pending):
             m3u8="",
             cover_path=embedded_cover_path,
             db=self.db,
-            original_id=self.id,
+            original_id=original_id if original_id != self.id else None,
             is_single=True,
         )
 
