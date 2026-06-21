@@ -28,6 +28,8 @@ class Track(Media):
     # Is None if a cover doesn't exist for the track
     cover_path: str | None
     db: Database
+    # Original id that was queued (may differ from meta.info.id if resolved)
+    original_id: str | None = None
     # change?
     download_path: str = ""
     is_single: bool = False
@@ -88,6 +90,13 @@ class Track(Media):
                 )
 
             self.db.set_downloaded(self.meta.info.id, self.download_path)
+            # If this item was queued under a different original id, record the replacement mapping
+            try:
+                if self.original_id and self.original_id != self.meta.info.id:
+                    self.db.set_replacement(self.original_id, self.meta.info.id)
+            except Exception:
+                logger.debug("Failed to set replacement mapping %s -> %s", self.original_id, self.meta.info.id)
+
             if self.m3u8:
                 try:
                     with open(self.m3u8, 'a+') as f: # noqa: ASYNC230
@@ -187,6 +196,7 @@ class PendingTrack(Pending):
             m3u8=self.m3u8,
             cover_path=self.cover_path,
             db=self.db,
+            original_id=self.id,
         )
 
 
@@ -265,6 +275,7 @@ class PendingSingle(Pending):
             m3u8="",
             cover_path=embedded_cover_path,
             db=self.db,
+            original_id=self.id,
             is_single=True,
         )
 
