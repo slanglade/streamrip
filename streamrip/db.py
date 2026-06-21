@@ -234,6 +234,7 @@ class Replacements(DatabaseBase):
         """Store a mapping from original_id -> replacement_id. Ignore duplicates."""
         try:
             self.add((original_id, replacement_id))
+            logger.debug("Inserted replacement mapping %s -> %s", original_id, replacement_id)
         except Exception:
             # Ignore any integrity errors or others — mapping may already exist
             logger.debug("Could not insert replacement %s -> %s", original_id, replacement_id)
@@ -267,7 +268,14 @@ class Database:
         # If not found, check replacements mapping
         rep = self.replacements.get_replacement(item_id)
         if rep:
-            return self.downloads.get_path(id=rep)
+            path = self.downloads.get_path(id=rep)
+            if path:
+                logger.info(
+                    "Using replacement id %s for original id %s",
+                    rep,
+                    item_id,
+                )
+            return path
         return ""
 
     def set_downloaded(self, item_id, filepath: str):

@@ -94,6 +94,11 @@ class Track(Media):
             try:
                 if self.original_id and self.original_id != self.meta.info.id:
                     self.db.set_replacement(self.original_id, self.meta.info.id)
+                    logger.debug(
+                        "Recorded replacement mapping %s -> %s",
+                        self.original_id,
+                        self.meta.info.id,
+                    )
             except Exception:
                 logger.debug("Failed to set replacement mapping %s -> %s", self.original_id, self.meta.info.id)
 
